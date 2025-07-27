@@ -1,64 +1,48 @@
+// данные одного продукта
 export interface IProduct {
-	id: string;
-	title: string;
-	category: string;
-	description: string;
-	image: string;
-	price: number;
+	id: string;	// уникалный id
+	title: string; // название продукта
+	category: string;	// катетегория/тэг
+	description: string; // описание продукта
+	image: string; // путь до картинки
+	price: number; // цена продукта
 }
 
+// каталог продуктов - это просто массив продуктов
 export interface IProductsCatalog {
-	items: IProduct[];
+	items: IProduct[];	// массив продуктов
 }
 
+// интефейс для каталога продуктов в api. api кроме массива продуктов еще отдает их общее количество 
 export interface IProductsCatalogData extends IProductsCatalog {
-	total: number;
+	total: number;	// количество продуктов в каталоге
 }
 
-export interface IProductsModel extends IProductsCatalog {
-	setProducts(items: IProduct[]): void; // наполенение каталога продуктов данными загруженнми через API с сервера
-	getProducts(): IProduct[]; // возвращает весь массив продуктов
-	getProduct(id: string): IProduct; // возвращает конкретный продутк по ID
+// модель данных всего приложения
+export interface IWebLarekState {
+	catalog: IProduct[]; // массив продуктов, с которым работает приложение
+	preview: string | null; // id продукта для просмотра в модальном окне
+	order: IOrder | null; // данные текущего заказа: корзина + данные клиента
 }
 
+// данные заказа, которые вводятся пользоватлем через форму 
 export interface IOrderForm {
-	payment: string;
-	email: string;
-	phone: string;
-	address: string;
+	payment: string;	// способ оплаты
+	email: string;	// email клиента
+	phone: string;	// телефон клиента
+	address: string;	// адрес доставки 
 }
+
+// заказ состоит из данных из формы + массив id продуктов и их общей стоимости из корзины 
 export interface IOrder extends IOrderForm {
-	items: string[]; // массив id
-	total: number;
+	items: string[]; // массив id продуктов
+	total: number; // общая стоимость заказа
 }
 
+export type FormErrors = Partial<Record<keyof IOrder, string>>;
+
+// интерфейс для ответа от api при отправке заказа на сервер
 export interface IOrderAnswer {
-	id: string;
-	total: number;
-}
-
-export interface IBasket extends IOrder {
-	add(id: string): void; // добавляет id продукта в корзину
-	delete(id: string): void; // удаляет id продукта из корзины
-	getTotal(): number; // возвращает количество продуктов в корзине
-}
-
-export interface IPage {
-	products: HTMLElement[]; // массив карточек продуктов каталога
-	basketTotal: number; // количество продуктов в корзине
-	locked: boolean; // признак блокировки страницы при открытии модального окна
-}
-
-export interface IBasketView {
-	items: HTMLElement[]; // массив карточек продуктов добавленных в корзину
-	total: number; // общая стоимость продуктов в корзине
-}
-
-export interface IModalData {
-	content: HTMLElement;
-}
-
-export interface IFormState {
-	valid: boolean;
-	errors: string[];
+	id: string; // уникальный номер заказа
+	total: number; // общая сумма заказа
 }

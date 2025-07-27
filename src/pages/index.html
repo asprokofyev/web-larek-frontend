@@ -199,7 +199,7 @@
 
 		<template id="card-catalog">
 			<button class="gallery__item card">
-				<span class="card__category card__category_soft">софт-скил</span>
+				<span class="card__category">софт-скил</span>
 				<h2 class="card__title">+1 час в сутках</h2>
 				<img
 					class="card__image"
@@ -218,7 +218,7 @@
 					alt=""
 				/>
 				<div class="card__column">
-					<span class="card__category card__category_other">другое</span>
+					<span class="card__category">другое</span>
 					<h2 class="card__title">Бэкенд-антистресс</h2>
 					<p class="card__text">
 						Если планируете решать задачи в тренажёре, берите два.
@@ -248,7 +248,7 @@
 				<h2 class="modal__title">Корзина</h2>
 				<ul class="basket__list"></ul>
 				<div class="modal__actions">
-					<button class="button basket__button">Оформить</button>
+					<button class="button basket__button" disabled>Оформить</button>
 					<span class="basket__price">0 синапсов</span>
 				</div>
 			</div>
@@ -260,10 +260,10 @@
 					<div class="order__field">
 						<h2 class="modal__title">Способ оплаты</h2>
 						<div class="order__buttons">
-							<button name="card" type="button" class="button button_alt">
+							<button name="online" type="button" class="button button_alt">
 								Онлайн
 							</button>
-							<button name="cash" type="button" class="button button_alt">
+							<button name="cash on delivery" type="button" class="button button_alt">
 								При получении
 							</button>
 						</div>

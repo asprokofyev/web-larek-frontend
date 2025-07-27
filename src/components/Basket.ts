@@ -1,7 +1,10 @@
-import { IBasketView } from '../types';
-import { createElement, ensureElement } from '../utils/utils';
+import { createElement, ensureElement, formatNumber } from '../utils/utils';
 import { Component } from './base/Component';
 import { EventEmitter } from './base/events';
+
+interface IBasketView {
+	items: HTMLElement[]; // массив карточек продуктов добавленных в корзину
+}
 
 export class Basket extends Component<IBasketView> {
 	protected _list: HTMLElement;
@@ -27,16 +30,18 @@ export class Basket extends Component<IBasketView> {
 	set items(items: HTMLElement[]) {
 		if (items.length) {
 			this._list.replaceChildren(...items);
+			this.setDisabled(this._button, false);
 		} else {
 			this._list.replaceChildren(
 				createElement<HTMLParagraphElement>('p', {
 					textContent: 'Корзина пуста',
 				})
 			);
+			this.setDisabled(this._button, true);
 		}
 	}
 
 	set total(total: number) {
-		this.setText(this._total, `${total} синапсов`);
+		this.setText(this._total, `${formatNumber(total)} синапсов`);
 	}
 }
