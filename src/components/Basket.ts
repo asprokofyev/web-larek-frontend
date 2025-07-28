@@ -4,6 +4,7 @@ import { EventEmitter } from './base/events';
 
 interface IBasketView {
 	items: HTMLElement[]; // массив карточек продуктов добавленных в корзину
+	total: number; // общая стоимость продуктов в корзине
 }
 
 export class Basket extends Component<IBasketView> {

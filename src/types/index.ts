@@ -1,3 +1,7 @@
+/*--------------------------------------------------------
+  Типы и интерфейсы модели данных (Model)
+--------------------------------------------------------*/
+
 // данные одного продукта
 export interface IProduct {
 	id: string; // уникалный id
@@ -11,11 +15,6 @@ export interface IProduct {
 // каталог продуктов - это просто массив продуктов
 export interface IProductsCatalog {
 	items: IProduct[]; // массив продуктов
-}
-
-// интефейс для каталога продуктов в api. api кроме массива продуктов еще отдает их общее количество
-export interface IProductsCatalogData extends IProductsCatalog {
-	total: number; // количество продуктов в каталоге
 }
 
 // модель данных всего приложения
@@ -40,9 +39,29 @@ export interface IOrder extends IOrderForm {
 	total: number; // общая стоимость заказа
 }
 
+/*--------------------------------------------------------
+  Типы данных отображения (View)
+--------------------------------------------------------*/
+
 export type FormErrors = Partial<Record<keyof IOrder, string>>;
 
-// интерфейс для ответа от api при отправке заказа на сервер
+/*--------------------------------------------------------
+  Типы данных Api
+--------------------------------------------------------*/
+
+// интерфейс api приложения
+export interface IWebLarekApi {
+	getProducts: () => Promise<IProduct[]>;
+	getProduct: (id: string) => Promise<IProduct>;
+	sendOrder: (data: Partial<IOrder>) => Promise<IOrderAnswer>;
+}
+
+// тип данных каталога продуктов в api. api кроме массива продуктов еще отдает их общее количество
+export interface IProductsCatalogData extends IProductsCatalog {
+	total: number; // количество продуктов в каталоге
+}
+
+// тип данных ответа от api при отправке заказа на сервер
 export interface IOrderAnswer {
 	id: string; // уникальный номер заказа
 	total: number; // общая сумма заказа

@@ -1,13 +1,7 @@
 // api для обмена данными с сервером
 
-import { IOrder, IOrderAnswer, IProduct, IProductsCatalogData } from '../types';
+import { IOrder, IOrderAnswer, IProduct, IProductsCatalogData, IWebLarekApi } from '../types';
 import { Api } from './base/api';
-
-export interface IWebLarekApi {
-	getProducts: () => Promise<IProduct[]>;
-	getProduct: (id: string) => Promise<IProduct>;
-	sendOrder: (data: Partial<IOrder>) => Promise<IOrderAnswer>;
-}
 
 export class WebLarekApi extends Api implements IWebLarekApi {
 	readonly cdn: string;

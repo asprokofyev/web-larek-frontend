@@ -5,6 +5,7 @@ import { IEvents } from './base/events';
 interface IPage {
 	products: HTMLElement[]; // массив карточек продуктов каталога
 	locked: boolean; // признак блокировки страницы при открытии модального окна
+	counter: number; // количество продуктов в корзине
 }
 
 export class Page extends Component<IPage> {

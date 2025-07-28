@@ -45,15 +45,27 @@ npm run build
 yarn build
 ```
 
-## Архитектура
+## Архитектура приложения
+
+Для реализации приложения выбран паттерн MVP c использованием брокера событий. Такая комбинация позволила реализовать приложение, управляемое событиями, где брокер событий играет роль посредника между различными компонентами. В этом подходе, MVP обеспечивает структуру для разделения ответственности между представлением (View), моделью (Model) и презентатором (Presenter), а брокер событий позволяет компонентам взаимодействовать асинхронно, используя события.
+
+
+
+Весь функционал Presenter-а реализован файле - точке входа в приложение `src/index.ts`.
+
+В качестве брокера событий используется класс `EventEmitter` предоставленный в стартовом наборе.
+
+Взаимодействие с серверной частью приложения реализовано за счет расширения базового метода JavaScript `fetch`. Базовый функционал работы с запросами к серверу реализован в классе `Api`, предоставленного в стартовом пакете. Специфический для текущего приложения функционал реализован в классе `WebLarekApi`.
+
+Далее подробное описание всех классов.
 
 ## Базовый код
 
-1. Класс API
+1. **Класс `API`**
 
-2. Класс Component<T>
+2. **Класс `Component<T>`**
 
-3. Класс EventEmitter
+3. **Класс `EventEmitter`**
 
 Реализует паттерн «Наблюдатель» и позволяет подписываться на события и уведомлять подписчиков о наступлении события.
 
@@ -61,15 +73,127 @@ yarn build
 
 Дополнительно реализованы методы `onAll` и `offAll` — для подписки на все события и сброса всех подписчиков.
 
-Интересным дополнением является метод `trigger`, генерирующий заданное событие с заданными аргументами. Это позволяет передавать его в качестве обработчика события в другие классы. Эти классы будут генерировать события, не будучи при этом напрямую зависимыми от класса EventEmitter.
+Интересным дополнением является метод `trigger`, генерирующий заданное событие с заданными аргументами. Это позволяет передавать его в качестве обработчика события в другие классы. Эти классы будут генерировать события, не будучи при этом напрямую зависимыми от класса `EventEmitter`.
 
-4. Model<T>
+4. **`Model<T>`**
 
-## Компоненты работы с API
+## Константы и настройки приложения
 
-1. Класс WebLarekApi
+## Ключевые типы данных
 
-## Компоненты модели данных (бизнес-логика)
+### Основные типы данных
+
+1. **`IProduct`**
+   Интерфейс, описывающий данные одного товара:
+
+```typescript
+interface IProduct {
+	id: string; // Уникальный идентификатор товара
+	title: string; // Название товара
+	category: string; // Категория/тег товара
+	description: string; // Подробное описание товара
+	image: string; // URL изображения товара
+	price: number; // Цена товара
+}
+```
+
+2. **`IProductsCatalog`**
+   Интерфейс для каталога товаров:
+
+```typescript
+interface IProductsCatalog {
+	items: IProduct[]; // Массив товаров в каталоге
+}
+```
+
+3. **`IProductsCatalogData`**
+   Расширенный интерфейс для данных каталога из API:
+
+```typescript
+interface IProductsCatalogData extends IProductsCatalog {
+	total: number; // Общее количество товаров в каталоге
+}
+```
+
+4. **`IWebLarekState`**
+   Интерфейс состояния всего приложения:
+
+```typescript
+interface IWebLarekState {
+	catalog: IProduct[]; // Текущий каталог товаров
+	preview: string | null; // ID товара для просмотра (или null)
+	order: IOrder | null; // Данные текущего заказа (или null)
+	formErrors: FormErrors; // Ошибки валидации форм
+}
+```
+
+5. **`IOrderForm`**
+   Интерфейс для данных заказа, вводимых пользователем:
+
+```typescript
+interface IOrderForm {
+	payment: string; // Способ оплаты (например, "card" или "cash")
+	email: string; // Email покупателя
+	phone: string; // Телефон покупателя
+	address: string; // Адрес доставки
+}
+```
+
+6. **`IOrder`**
+   Полный интерфейс заказа:
+
+```typescript
+interface IOrder extends IOrderForm {
+	items: string[]; // Массив ID товаров в заказе
+	total: number; // Общая сумма заказа
+}
+```
+
+7. **`FormErrors`**
+   Тип для ошибок валидации форм:
+
+```typescript
+type FormErrors = Partial<Record<keyof IOrder, string>>;
+```
+
+Пример:
+
+```typescript
+{
+  phone?: string;
+  address?: string;
+}
+```
+
+8. **`IOrderAnswer`**
+   Интерфейс ответа от API при успешном оформлении заказа:
+
+```typescript
+interface IOrderAnswer {
+	id: string; // Уникальный идентификатор заказа
+	total: number; // Общая сумма заказа
+}
+```
+
+### Взаимосвязи типов
+
+1. **Каталог товаров**:
+
+   - `IProduct` → `IProductsCatalog` → `IProductsCatalogData`
+
+2. **Оформление заказа**:
+
+   - `IOrderForm` → `IOrder` (добавляются items и total)
+   - `IOrder` используется в `IWebLarekState`
+
+3. **Валидация**:
+
+   - `FormErrors` использует ключи из `IOrder` для описания возможных ошибок
+
+4. **Ответ сервера**:
+   - `IOrderAnswer` содержит данные о созданном заказе
+
+## Модель данных (бизнес-логика)
 
 ### Класс WebLarek
 
@@ -208,119 +332,13 @@ export class WebLarek extends Model<IWebLarekState>
 
 8. Класс Success
 
-## Ключевые типы данных
+## Презентер `src/index.ts`
 
-### Основные типы данных
 
-1. **`IProduct`**
-   Интерфейс, описывающий данные одного товара:
 
-```typescript
-interface IProduct {
-	id: string; // Уникальный идентификатор товара
-	title: string; // Название товара
-	category: string; // Категория/тег товара
-	description: string; // Подробное описание товара
-	image: string; // URL изображения товара
-	price: number; // Цена товара
-}
-```
+## Компоненты работы с API
 
-2. **`IProductsCatalog`**
-   Интерфейс для каталога товаров:
-
-```typescript
-interface IProductsCatalog {
-	items: IProduct[]; // Массив товаров в каталоге
-}
-```
-
-3. **`IProductsCatalogData`**
-   Расширенный интерфейс для данных каталога из API:
-
-```typescript
-interface IProductsCatalogData extends IProductsCatalog {
-	total: number; // Общее количество товаров в каталоге
-}
-```
-
-4. **`IWebLarekState`**
-   Интерфейс состояния всего приложения:
-
-```typescript
-interface IWebLarekState {
-	catalog: IProduct[]; // Текущий каталог товаров
-	preview: string | null; // ID товара для просмотра (или null)
-	order: IOrder | null; // Данные текущего заказа (или null)
-	formErrors: FormErrors; // Ошибки валидации форм
-}
-```
-
-5. **`IOrderForm`**
-   Интерфейс для данных заказа, вводимых пользователем:
-
-```typescript
-interface IOrderForm {
-	payment: string; // Способ оплаты (например, "card" или "cash")
-	email: string; // Email покупателя
-	phone: string; // Телефон покупателя
-	address: string; // Адрес доставки
-}
-```
-
-6. **`IOrder`**
-   Полный интерфейс заказа:
-
-```typescript
-interface IOrder extends IOrderForm {
-	items: string[]; // Массив ID товаров в заказе
-	total: number; // Общая сумма заказа
-}
-```
-
-7. **`FormErrors`**
-   Тип для ошибок валидации форм:
-
-```typescript
-type FormErrors = Partial<Record<keyof IOrder, string>>;
-```
-
-Пример:
-
-```typescript
-{
-  phone?: string;
-  address?: string;
-}
-```
-
-8. **`IOrderAnswer`**
-   Интерфейс ответа от API при успешном оформлении заказа:
-
-```typescript
-interface IOrderAnswer {
-	id: string; // Уникальный идентификатор заказа
-	total: number; // Общая сумма заказа
-}
-```
-
-### Взаимосвязи типов
-
-1. **Каталог товаров**:
-
-   - `IProduct` → `IProductsCatalog` → `IProductsCatalogData`
-
-2. **Оформление заказа**:
-
-   - `IOrderForm` → `IOrder` (добавляются items и total)
-   - `IOrder` используется в `IWebLarekState`
-
-3. **Валидация**:
-
-   - `FormErrors` использует ключи из `IOrder` для описания возможных ошибок
-
-4. **Ответ сервера**:
-   - `IOrderAnswer` содержит данные о созданном заказе
+1. Класс WebLarekApi
 
 ## Размещение в сети
 

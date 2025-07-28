@@ -2,7 +2,7 @@ import { ensureElement, formatNumber } from '../utils/utils';
 import { Component } from './base/Component';
 
 interface ISuccess {
-	total: number;  
+	total: number; // сумма заказа
 }
 
 interface ISuccessActions {
@@ -11,7 +11,7 @@ interface ISuccessActions {
 
 export class Success extends Component<ISuccess> {
 	protected _close: HTMLElement;
-	protected _total: HTMLElement
+	protected _total: HTMLElement;
 
 	constructor(container: HTMLElement, actions: ISuccessActions) {
 		super(container);
@@ -21,7 +21,7 @@ export class Success extends Component<ISuccess> {
 			this.container
 		);
 
-				this._total = ensureElement<HTMLElement>(
+		this._total = ensureElement<HTMLElement>(
 			'.order-success__description',
 			this.container
 		);
