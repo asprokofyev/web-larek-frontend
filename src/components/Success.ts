@@ -1,4 +1,4 @@
-import { ensureElement } from '../utils/utils';
+import { ensureElement, formatNumber } from '../utils/utils';
 import { Component } from './base/Component';
 
 interface ISuccess {
@@ -32,6 +32,6 @@ export class Success extends Component<ISuccess> {
 	}
 
 	set total(value: number) {
-		this.setText(this._total, `Списано ${value} синапсов`);
+		this.setText(this._total, `Списано ${formatNumber(value)} синапсов`);
 	}
 }
