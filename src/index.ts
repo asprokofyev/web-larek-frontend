@@ -8,8 +8,8 @@ import { Success } from './components/Success';
 import { WebLarekApi } from './components/WebLarekApi';
 import { WebLarek } from './components/WebLarekModel';
 import './scss/styles.scss';
-import { IOrderAnswer, IOrderForm, IProduct, IProductsCatalog } from './types';
-import { API_URL } from './utils/constants';
+import { IOrderForm, IProduct, IProductsCatalog } from './types';
+import { API_URL, CDN_URL } from './utils/constants';
 import { cloneTemplate, ensureElement } from './utils/utils';
 
 // инициализация брокера событий
@@ -17,7 +17,7 @@ const events = new EventEmitter();
 // инициализация каталога продуктов
 const appData = new WebLarek({}, events);
 // инициализация API
-const api = new WebLarekApi(API_URL);
+const api = new WebLarekApi(CDN_URL, API_URL);
 
 // Чтобы мониторить все события, для отладки
 events.onAll(({ eventName, data }) => {
@@ -186,8 +186,7 @@ events.on('contactsFormErrors:change', (errors: Partial<IOrderForm>) => {
 events.on('contacts:submit', () => {
 	api
 		.sendOrder(appData.order)
-		.then((result: IOrderAnswer) => {
-			console.log(result);
+		.then((result) => {
 			const success = new Success(cloneTemplate(orderSuccessTemplate), {
 				onClick: () => {
 					modal.close();
@@ -216,6 +215,6 @@ events.on('modal:close', () => {
 api
 	.getProducts()
 	.then((data) => {
-		appData.setProducts(data.items);
+		appData.setProducts(data);
 	})
 	.catch((err) => console.log(err));
