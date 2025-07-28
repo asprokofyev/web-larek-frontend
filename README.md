@@ -210,57 +210,117 @@ export class WebLarek extends Model<IWebLarekState>
 
 ## Ключевые типы данных
 
+### Основные типы данных
+
+1. **`IProduct`**
+   Интерфейс, описывающий данные одного товара:
+
 ```typescript
-// данные одного продукта
-export interface IProduct {
-	id: string; // уникалный id
-	title: string; // название продукта
-	category: string; // катетегория/тэг
-	description: string; // описание продукта
-	image: string; // путь до картинки
-	price: number; // цена продукта
-}
-
-// каталог продуктов - это просто массив продуктов
-export interface IProductsCatalog {
-	items: IProduct[]; // массив продуктов
-}
-
-// интефейс для каталога продуктов в api. api кроме массива продуктов еще отдает их общее количество
-export interface IProductsCatalogData extends IProductsCatalog {
-	total: number; // количество продуктов в каталоге
-}
-
-// модель данных всего приложения
-export interface IWebLarekState {
-	catalog: IProduct[]; // массив продуктов, с которым работает приложение
-	preview: string | null; // id продукта для просмотра в модальном окне
-	order: IOrder | null; // данные текущего заказа: корзина + данные клиента
-}
-
-// данные заказа, которые вводятся пользоватлем через форму
-export interface IOrderForm {
-	payment: string; // способ оплаты
-	email: string; // email клиента
-	phone: string; // телефон клиента
-	address: string; // адрес доставки
-}
-
-// заказ состоит из данных из формы + массив id продуктов и их общей стоимости из корзины
-export interface IOrder extends IOrderForm {
-	items: string[]; // массив id продуктов
-	total: number; // общая стоимость заказа
-}
-
-// тип для ошибок валидации форм
-export type FormErrors = Partial<Record<keyof IOrder, string>>;
-
-// интерфейс для ответа от api при отправке заказа на сервер
-export interface IOrderAnswer {
-	id: string; // уникальный номер заказа
-	total: number; // общая сумма заказа
+interface IProduct {
+	id: string; // Уникальный идентификатор товара
+	title: string; // Название товара
+	category: string; // Категория/тег товара
+	description: string; // Подробное описание товара
+	image: string; // URL изображения товара
+	price: number; // Цена товара
 }
 ```
+
+2. **`IProductsCatalog`**
+   Интерфейс для каталога товаров:
+
+```typescript
+interface IProductsCatalog {
+	items: IProduct[]; // Массив товаров в каталоге
+}
+```
+
+3. **`IProductsCatalogData`**
+   Расширенный интерфейс для данных каталога из API:
+
+```typescript
+interface IProductsCatalogData extends IProductsCatalog {
+	total: number; // Общее количество товаров в каталоге
+}
+```
+
+4. **`IWebLarekState`**
+   Интерфейс состояния всего приложения:
+
+```typescript
+interface IWebLarekState {
+	catalog: IProduct[]; // Текущий каталог товаров
+	preview: string | null; // ID товара для просмотра (или null)
+	order: IOrder | null; // Данные текущего заказа (или null)
+	formErrors: FormErrors; // Ошибки валидации форм
+}
+```
+
+5. **`IOrderForm`**
+   Интерфейс для данных заказа, вводимых пользователем:
+
+```typescript
+interface IOrderForm {
+	payment: string; // Способ оплаты (например, "card" или "cash")
+	email: string; // Email покупателя
+	phone: string; // Телефон покупателя
+	address: string; // Адрес доставки
+}
+```
+
+6. **`IOrder`**
+   Полный интерфейс заказа:
+
+```typescript
+interface IOrder extends IOrderForm {
+	items: string[]; // Массив ID товаров в заказе
+	total: number; // Общая сумма заказа
+}
+```
+
+7. **`FormErrors`**
+   Тип для ошибок валидации форм:
+
+```typescript
+type FormErrors = Partial<Record<keyof IOrder, string>>;
+```
+
+Пример:
+
+```typescript
+{
+  phone?: string;
+  address?: string;
+}
+```
+
+8. **`IOrderAnswer`**
+   Интерфейс ответа от API при успешном оформлении заказа:
+
+```typescript
+interface IOrderAnswer {
+	id: string; // Уникальный идентификатор заказа
+	total: number; // Общая сумма заказа
+}
+```
+
+### Взаимосвязи типов
+
+1. **Каталог товаров**:
+
+   - `IProduct` → `IProductsCatalog` → `IProductsCatalogData`
+
+2. **Оформление заказа**:
+
+   - `IOrderForm` → `IOrder` (добавляются items и total)
+   - `IOrder` используется в `IWebLarekState`
+
+3. **Валидация**:
+
+   - `FormErrors` использует ключи из `IOrder` для описания возможных ошибок
+
+4. **Ответ сервера**:
+   - `IOrderAnswer` содержит данные о созданном заказе
 
 ## Размещение в сети
 
