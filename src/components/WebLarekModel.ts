@@ -5,6 +5,7 @@ import {
 	IProduct,
 	IWebLarekState,
 } from '../types';
+import { settings } from '../utils/constants';
 import { Model } from './base/Model';
 
 // основной каласс работы с данными приложения
@@ -23,7 +24,7 @@ export class WebLarek extends Model<IWebLarekState> {
 	formErrors: FormErrors = {}; // массив ошибок формы
 
 	// сохранить данные каталога полученные из api
-	setProducts(items: IProduct[]) {
+	setProducts(items: IProduct[]): void {
 		this.catalog = items;
 		this.events.emit('products:changed');
 	}
@@ -66,7 +67,7 @@ export class WebLarek extends Model<IWebLarekState> {
 	}
 
 	// очистить корзину/заказ после успешной отправки на сервер
-	clearBasket() {
+	clearBasket(): void {
 		this.order = {
 			email: '',
 			phone: '',
@@ -78,47 +79,47 @@ export class WebLarek extends Model<IWebLarekState> {
 		this.events.emit('products:changed');
 	}
 
-	// заполнение полей заказа из формы с шага 1
-	setOrderField(field: keyof IOrderForm, value: string) {
+	// заполнение полей заказа из формы выбора типа оплаты и ввода адреса доставки
+	setOrderField(field: keyof IOrderForm, value: string): void {
 		this.order[field] = value;
 
 		this.validateOrder();
 	}
 
-	// заполнение полей заказа из формы с шага 2
-	setContactsField(field: keyof IOrderForm, value: string) {
+	// заполнение полей заказа из формы ввода номера телефон и email-a
+	setContactsField(field: keyof IOrderForm, value: string): void {
 		this.order[field] = value;
 
 		this.validateContacts();
 	}
 
-	// проврека готовности заказа
-	validateOrder() {
+	// проврека формы выбора типа оплаты и ввода адреса доставки
+	validateOrder(): void {
 		const errors: typeof this.formErrors = {};
 		if (!this.order.payment) {
-			errors.payment = 'Необходимо выбрать способ оплаты';
+			errors.payment = settings.messages.formErrors.payment;
 		}
 		if (!this.order.address) {
-			errors.phone = 'Необходимо указать адрес доставки';
+			errors.phone = settings.messages.formErrors.phone;
 		}
 		this.formErrors = errors;
 		this.events.emit('orderFormErrors:change', this.formErrors);
 	}
-
-	validateContacts() {
+	// проврека формы выбора ввода номера телефон и email-a
+	validateContacts(): void {
 		const errors: typeof this.formErrors = {};
 		if (!this.order.email) {
-			errors.email = 'Необходимо указать email';
+			errors.email = settings.messages.formErrors.email;
 		}
 		if (!this.order.phone) {
-			errors.phone = 'Необходимо указать телефон';
+			errors.phone = settings.messages.formErrors.phone;
 		}
 		this.formErrors = errors;
 		this.events.emit('contactsFormErrors:change', this.formErrors);
 	}
 
 	// установить id выбранного к просмотру в модальном окне продукта
-	setPreview(item: IProduct) {
+	setPreview(item: IProduct): void {
 		this.preview = item.id;
 		this.emitChanges('preview:changed', item);
 	}

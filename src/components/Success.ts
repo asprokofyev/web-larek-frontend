@@ -1,13 +1,7 @@
+import { settings } from '../utils/constants';
 import { ensureElement, formatNumber } from '../utils/utils';
 import { Component } from './base/Component';
-
-interface ISuccess {
-	total: number; // сумма заказа
-}
-
-interface ISuccessActions {
-	onClick: () => void;
-}
+import { ISuccess, ISuccessActions } from '../types/index';
 
 export class Success extends Component<ISuccess> {
 	protected _close: HTMLElement;
@@ -32,6 +26,9 @@ export class Success extends Component<ISuccess> {
 	}
 
 	set total(value: number) {
-		this.setText(this._total, `Списано ${formatNumber(value)} синапсов`);
+		this.setText(
+			this._total,
+			settings.messages.success.replace('summa', formatNumber(value))
+		);
 	}
 }

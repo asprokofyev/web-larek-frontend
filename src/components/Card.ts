@@ -1,37 +1,10 @@
 // вывод карточки прожукта
 // три вида карточки - три класса: карточка на странице, карточка в модальном окне, карточка в корзине
 
+import { categoryTypes, ICard, ICardActions } from '../types';
+import { settings } from '../utils/constants';
 import { formatNumber } from '../utils/utils';
 import { Component } from './base/Component';
-
-interface ICardActions {
-	onClick: (event: MouseEvent) => void;
-}
-
-export type categoryTypes =
-	| 'другое'
-	| 'софт-скил'
-	| 'дополнительное'
-	| 'кнопка'
-	| 'хард-скил';
-
-const categoryClasses: Record<categoryTypes, string> = {
-	другое: 'card__category_other',
-	'софт-скил': 'card__category_soft',
-	дополнительное: 'card__category_additional',
-	кнопка: 'card__category_button',
-	'хард-скил': 'card__category_hard',
-};
-
-export interface ICard {
-	id: string; // id продукта
-	title: string; // заголовок. используется всегда
-	description?: string; // описание. используется только при просмотре в модальном окне
-	image?: string; // картинка. используется в списке и в модальном окне
-	price: number; // используетмся всегда
-	itemIndex: number; // номер продукта по порядку
-	category?: categoryTypes; // используется в списке и в модальном окне
-}
 
 export class Card extends Component<ICard> {
 	protected _title: HTMLElement;
@@ -80,16 +53,16 @@ export class Card extends Component<ICard> {
 
 	set category(value: categoryTypes) {
 		this.setText(this._category, String(value));
-		this.toggleClass(this._category, categoryClasses[value]);
+		this.toggleClass(this._category, settings.categoryClasses[value]);
 	}
 
 	set price(value: number) {
 		let priceText = '';
 		if (!value) {
-			priceText = 'Бесценно';
+			priceText = settings.messages.card.noprice;
 			this.setDisabled(this._button, true);
 		} else {
-			priceText = `${formatNumber(value)} синапсов`;
+			priceText = formatNumber(value)+' '+settings.currency;
 		}
 		this.setText(this._price, priceText);
 	}
@@ -104,13 +77,13 @@ export class Card extends Component<ICard> {
 
 	changeButton(price: number, inBasket: boolean): void {
 		if (!price) {
-			this.setText(this._button, 'Недоступно');
+			this.setText(this._button, settings.messages.buyButtonValues.disabled);
 			this.setDisabled(this._button, true);
 		} else {
 			if (inBasket) {
-				this.setText(this._button, 'Убрать');
+				this.setText(this._button, settings.messages.buyButtonValues.delete);
 			} else {
-				this.setText(this._button, 'Купить');
+				this.setText(this._button, settings.messages.buyButtonValues.add);
 			}
 		}
 	}

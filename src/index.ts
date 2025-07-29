@@ -1,6 +1,6 @@
 import { EventEmitter } from './components/base/events';
 import { Basket } from './components/Basket';
-import { Card, categoryTypes } from './components/Card';
+import { Card } from './components/Card';
 import { Modal } from './components/Modal';
 import { Contacts, Order } from './components/Order';
 import { Page } from './components/Page';
@@ -8,7 +8,7 @@ import { Success } from './components/Success';
 import { WebLarekApi } from './components/WebLarekApi';
 import { WebLarek } from './components/WebLarekModel';
 import './scss/styles.scss';
-import { IOrderForm, IProduct, IProductsCatalog } from './types';
+import { categoryTypes, IOrderForm, IProduct, IProductsCatalog } from './types';
 import { API_URL, CDN_URL } from './utils/constants';
 import { cloneTemplate, ensureElement } from './utils/utils';
 
