@@ -91,8 +91,7 @@ export const CDN_URL = `${process.env.API_ORIGIN}/content/weblarek`;
 
 2. Сообщения (`messages`)
 
-3. Ошибки форм (`formErrors`)
-
+2.1. Ошибки форм (`formErrors`)
 
     ```typescript
     phone: 'Необходимо указать телефон',
