@@ -47,8 +47,6 @@ yarn build
 
 ## Архитектура приложения
 
-### Паттерн
-
 Для реализации приложения выбран паттерн MVP c использованием брокера событий. В этом подходе, MVP обеспечивает структуру для разделения ответственности между представлением (View), моделью (Model) и презентатором (Presenter), а брокер событий позволяет компонентам взаимодействовать асинхронно, используя события.
 
 Модель приложения реализована классом `WebLarek` с интерфейсом `IWebLarekState` c использованием базового класса `Model`.
@@ -60,8 +58,6 @@ yarn build
 В качестве брокера событий используется класс `EventEmitter` предоставленный в стартовом наборе.
 
 Взаимодействие с серверной частью приложения реализовано за счет расширения базового метода JavaScript `fetch`. Базовый функционал работы с запросами к серверу реализован в классе `Api`, предоставленного в стартовом пакете. Специфический для текущего приложения функционал реализован в классе `WebLarekApi`.
-
-### Модель событий
 
 ## Константы и настройки приложения
 
@@ -182,23 +178,41 @@ export interface IProductsCatalog {
 
 ```typescript
 export interface IWebLarekState {
-	catalog: IProduct[]; // массив продуктов, с которым работает приложение
-	preview: string | null; // id продукта для просмотра в модальном окне
-	order: IOrder | null; // данные текущего заказа: корзина + данные клиента
-	formErrors: FormErrors; // ошибки валидации форм
-	setProducts(items: IProduct[]): void; // сохранить данные каталога полученные из api
-	getProduct(id: string): IProduct; // возвращает данные конкретного продукта
-	addToBasket(id: string): void; // добавить продукт в корзину
-	deleteFromBasket(id: string): void; // удалить продукт из корзины
-	inBasket(id: string): boolean; // проверить наличие продукта в корзине
-	getProductsInBasketCount(): number; // посчитать количество продуктов в корзине
-	getTotal(): number; // посчитать общую стоимость продуктов корзины/заказа
-	clearBasket(): void; // очистить корзину/заказ после успешной отправки на сервер
-	setOrderField(field: keyof IOrderForm, value: string): void; // заполнение полей заказа из формы выбора типа оплаты и ввода адреса доставки
-	setContactsField(field: keyof IOrderForm, value: string): void; // заполнение полей заказа из формы ввода номера телефон и email-a
-	validateOrder(): void; // проврека формы выбора типа оплаты и ввода адреса доставки
-	validateContacts(): void; // проврека формы выбора ввода номера телефон и email-a
-	setPreview(item: IProduct): void; // установить id выбранного к просмотру в модальном окне продукта
+	// массив продуктов, с которым работает приложение
+	catalog: IProduct[];
+	// id продукта для просмотра в модальном окне
+	preview: string | null;
+	// данные текущего заказа: корзина + данные клиента
+	order: IOrder | null;
+	// ошибки валидации форм
+	formErrors: FormErrors;
+
+	// сохранить данные каталога полученные из api
+	setProducts(items: IProduct[]): void;
+	// возвращает данные конкретного продукта
+	getProduct(id: string): IProduct;
+	// добавить продукт в корзину
+	addToBasket(id: string): void;
+	// удалить продукт из корзины
+	deleteFromBasket(id: string): void;
+	// проверить наличие продукта в корзине
+	inBasket(id: string): boolean;
+	// посчитать количество продуктов в корзине
+	getProductsInBasketCount(): number;
+	// посчитать общую стоимость продуктов корзины/заказа
+	getTotal(): number;
+	// очистить корзину/заказ после успешной отправки на сервер
+	clearBasket(): void;
+	// заполнение полей заказа из формы выбора типа оплаты и ввода адреса доставки
+	setOrderField(field: keyof IOrderForm, value: string): void;
+	// заполнение полей заказа из формы ввода номера телефон и email-a
+	setContactsField(field: keyof IOrderForm, value: string): void;
+	// проврека формы выбора типа оплаты и ввода адреса доставки
+	validateOrder(): void;
+	// проврека формы выбора ввода номера телефон и email-a
+	validateContacts(): void;
+	// установить id выбранного к просмотру в модальном окне продукта
+	setPreview(item: IProduct): void;
 }
 ```
 
@@ -396,19 +410,19 @@ setHidden(element: HTMLElement)
 5. **Показать элемент**
 
 ```typescript
-protected setVisible(element: HTMLElement)
+setVisible(element: HTMLElement)
 ```
 
 6. **Установить изображение с алтернативным текстом**
 
 ```typescript
-protected setImage(element: HTMLImageElement, src: string, alt?: string)
+setImage(element: HTMLImageElement, src: string, alt?: string)
 ```
 
 7. **Вернуть корневой DOM-элемент**
 
 ```typescript
-	render(data?: Partial<T>): HTMLElement
+render(data?: Partial<T>): HTMLElement
 ```
 
 ### Класс `EventEmitter`
@@ -426,6 +440,44 @@ protected setImage(element: HTMLImageElement, src: string, alt?: string)
 ### `Model<T>`
 
 **Файл**: `src/components/base/Model.ts`.
+
+Базовый абстрактный класс `Model<T>` предоставляет фундаментальную функциональность для работы с моделями данных в TypeScript-приложении. Он служит для:
+
+1. Различения моделей от простых объектов данных
+2. Предоставления общего интерфейса для работы с событиями моделей
+3. Создания основы для конкретных моделей данных в приложении
+
+Файл содержит Type Guard `isModel`, который проверяет, является ли переданный объект экземпляром класса Model.
+
+```typescript
+export const isModel = (obj: unknown): obj is Model<any> => {
+	return obj instanceof Model;
+};
+```
+
+А также сам обстрактный класс с описанным конструктором и одним общим для всех моделей методом `emitChanges`. Реализация класса изначально подразумевает, что модель будет работать с брокером событий.
+
+1. **Конструктор**:
+
+```typescript
+constructor(data: Partial<T>, protected events: IEvents)
+```
+
+Параметры:
+
+- `data: Partial<T>` - начальные данные для модели (частичные, так как могут быть не все поля)
+- `events: IEvents` - объект для работы с событиями.
+
+2. **Метод `emitChanges`**: используется для уведомления подписчиков об изменениях в модели.
+
+```typescript
+emitChanges(event: string, payload?: object): void
+```
+
+Параметры:
+
+- `event: string` - название события
+- `payload?: object` - дополнительные данные события (по умолчанию - пустой объект)
 
 ## Модель данных (бизнес-логика)
 
@@ -543,27 +595,100 @@ export class WebLarek extends Model<IWebLarekState>
 
 ## Компоненты представления
 
-1. Класс Page
+Все методы работы с HTML-элементами веб-страницы реализованы в базовом классе `Component`.
 
-2. Класс Modal
+Поэтому все классы представления описанные ниже по сути реализрована по одной и той же схеме:
 
-3. Класс Form<T>
+1. в конструкторе класса по идентификатору или css-классу находятся объекты веб-страницы, за отображение которых отвечает данный класс.
+2. также в конструкторе назначаются необходимые слушатели событий.
+3. измения данных в HTML-элемнтах реализованы через соответсвующие сеттеры.
 
-4. Класс Order
+### Класс `Page`
 
-5. Класс Contacts
+**Файл**: `src/components/Page.ts`.
 
-6. Класс Card
+Класс `Page` представляет собой компонент для управления основным отображением страницы приложения. Наследуется от базового класса `Component` и реализует интерфейс `IPage`.
 
-7. Класс Basket
+#### Обрабатываемые элементы (свойства класса)
 
-8. Класс Success
+Класс работает со следующими элементами страницы:
 
-## Презентер `src/index.ts`
+- **\_counter**: HTMLElement - элемент для отображения количества товаров в корзине
+- **\_catalog**: HTMLElement - контейнер для элементов каталога
+- **\_wrapper**: HTMLElement - обертка страницы (используется для блокировки прокрутки)
+- **\_basket**: HTMLElement - кнопка/иконка корзины
+
+#### Методы класса
+
+Для изменения данных элемнтов реализованы следующие методы (сеттеры):
+
+1. **counter**: устанавливает значение счетчика товаров в корзине.
+
+```typescript
+set counter(value: number): void
+```
+
+Параметры:
+
+- `value: number` - новое значение счетчика
+
+2. **catalog**: обновляет содержимое каталога.
+
+```typescript
+set catalog(items: HTMLElement[]): void
+```
+
+Параметры:
+
+- `items: HTMLElement[]` - массив DOM-элементов для отображения в каталоге
+
+3. **locked**: блокирует или разблокирует прокрутку страницы.
+
+```typescript
+set locked(value: boolean): void
+```
+
+Параметры:
+
+- `value: boolean` - флаг блокировки (true - заблокировать, false - разблокировать)
+
+#### Устанавливаемые слушатели событий
+
+При создании экземпляра класса на элемент `_basket` добавляется обработчик клика, который инициирует событие `'basket:open'` через систему событий.
+
+### Класс `Modal`
+
+**Файл**: `src/components/Modal.ts`.
+
+### Класс `Form<T>`
+
+**Файл**: `src/components/Form.ts`.
+
+### Классы `Order` и `Contacts`
+
+**Файл**: `src/components/Order.ts`.
+
+### Класс `Card`
+
+**Файл**: `src/components/Card.ts`.
+
+### Класс `Basket`
+
+**Файл**: `src/components/Basket.ts`.
+
+### Класс `Success`
+
+**Файл**: `src/components/Success.ts`.
+
+## Презентер
+
+**Файл**: `src/index.ts`.
 
 ## Компоненты работы с API
 
-1. Класс WebLarekApi
+### Класс `WebLarekApi`
+
+**Файл**: `src/components/WebLarekApi.ts`.
 
 ## Размещение в сети
 
