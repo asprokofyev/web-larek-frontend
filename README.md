@@ -922,7 +922,7 @@ set description(value: string): void
 set category(value: categoryTypes): void
 ```
 
-Маппинг названий категорий и css-классов находится настройках приложения `settings.categoryClasses` и работает за счет типа `categoryTypes`.
+Маппинг названий категорий и css-классов находится в настройках приложения `settings.categoryClasses` и работает за счет типа `categoryTypes`.
 
 5. сеттер **`price`**: устанавливает цену товара с форматированием. Если цена равна 0, отображается сообщение "Бесценно" и кнопка отключается. Текст сообщения берется из настроек приложения `settings.messages.card.noprice`.
 
