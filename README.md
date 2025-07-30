@@ -63,11 +63,7 @@ yarn build
 
 ## Константы и настройки приложения
 
-**Файл:** `src/utils/constants.ts`
-
-### Назначение
-
-Файл содержит глобальные константы и настройки приложения, включая:
+**Файл:** `src/utils/constants.ts` содержит глобальные константы и настройки приложения, включая:
 
 - URL API и CDN
 - Текстовые константы для интерфейса
@@ -151,11 +147,7 @@ export const CDN_URL = `${process.env.API_ORIGIN}/content/weblarek`;
 
 ## Ключевые типы данных
 
-**Файл**: `src/types/index.ts`
-
-### Назначение
-
-Файл содержит все основные типы данных и интерфейсы, используемые в приложении. Разделен на три основные категории:
+**Файл**: `src/types/index.ts` содержит все основные типы данных и интерфейсы, используемые в приложении. Разделен на три основные категории:
 
 1. Модельные типы (Model) - описывают структуру данных приложения
 2. Типы представления (View) - описывают структуры для работы с UI
@@ -163,29 +155,20 @@ export const CDN_URL = `${process.env.API_ORIGIN}/content/weblarek`;
 
 ### Модельные типы (Model)
 
-### `IProduct`
+1. **IProduct`**: описывает структуру данных продукта.
 
 ```typescript
 export interface IProduct {
-	id: string;
-	title: string;
-	category: string;
-	description: string;
-	image: string;
-	price: number;
+	id: string; // уникальный идентификатор
+	title: string; // название продукта
+	category: string; // категория продукта
+	description: string; // описание продукта
+	image: string; // путь к изображению
+	price: number; // цена продукта
 }
 ```
 
-- **Назначение**: Описывает структуру данных продукта
-- **Поля**:
-  - `id` - уникальный идентификатор
-  - `title` - название продукта
-  - `category` - категория/тег продукта
-  - `description` - описание продукта
-  - `image` - путь к изображению
-  - `price` - цена продукта
-
-### `IProductsCatalog`
+2. **`IProductsCatalog`**: описывает каталог продуктов как массив `IProduct`
 
 ```typescript
 export interface IProductsCatalog {
@@ -193,33 +176,31 @@ export interface IProductsCatalog {
 }
 ```
 
-- **Назначение**: Описывает каталог продуктов как массив `IProduct`
-
-### `IWebLarekState`
+3. **`IWebLarekState`**: главный интерфейс состояния приложения
 
 ```typescript
 export interface IWebLarekState {
-	catalog: IProduct[];
-	preview: string | null;
-	order: IOrder | null;
-	formErrors: FormErrors;
-	// ...методы
+	catalog: IProduct[]; // массив продуктов, с которым работает приложение
+	preview: string | null; // id продукта для просмотра в модальном окне
+	order: IOrder | null; // данные текущего заказа: корзина + данные клиента
+	formErrors: FormErrors; // ошибки валидации форм
+	setProducts(items: IProduct[]): void; // сохранить данные каталога полученные из api
+	getProduct(id: string): IProduct; // возвращает данные конкретного продукта
+	addToBasket(id: string): void; // добавить продукт в корзину
+	deleteFromBasket(id: string): void; // удалить продукт из корзины
+	inBasket(id: string): boolean; // проверить наличие продукта в корзине
+	getProductsInBasketCount(): number; // посчитать количество продуктов в корзине
+	getTotal(): number; // посчитать общую стоимость продуктов корзины/заказа
+	clearBasket(): void; // очистить корзину/заказ после успешной отправки на сервер
+	setOrderField(field: keyof IOrderForm, value: string): void; // заполнение полей заказа из формы выбора типа оплаты и ввода адреса доставки
+	setContactsField(field: keyof IOrderForm, value: string): void; // заполнение полей заказа из формы ввода номера телефон и email-a
+	validateOrder(): void; // проврека формы выбора типа оплаты и ввода адреса доставки
+	validateContacts(): void; // проврека формы выбора ввода номера телефон и email-a
+	setPreview(item: IProduct): void; // установить id выбранного к просмотру в модальном окне продукта
 }
 ```
 
-- **Назначение**: Главный интерфейс состояния приложения
-- **Поля**:
-  - `catalog` - массив продуктов
-  - `preview` - ID продукта для просмотра в модальном окне
-  - `order` - данные текущего заказа
-  - `formErrors` - ошибки валидации форм
-- **Методы**:
-  - Управление каталогом (`setProducts`, `getProduct`)
-  - Работа с корзиной (`addToBasket`, `deleteFromBasket`, `inBasket` и др.)
-  - Работа с заказом (`setOrderField`, `setContactsField`)
-  - Валидация (`validateOrder`, `validateContacts`)
-
-### `IOrderForm`
+4. **`IOrderForm`**: данные формы заказа, вводимые пользователем
 
 ```typescript
 export interface IOrderForm {
@@ -230,9 +211,7 @@ export interface IOrderForm {
 }
 ```
 
-- **Назначение**: Данные формы заказа, вводимые пользователем
-
-### `IOrder`
+5. **`IOrder`**: полные данные заказа, включая продукты и итоговую сумму
 
 ```typescript
 export interface IOrder extends IOrderForm {
@@ -241,35 +220,25 @@ export interface IOrder extends IOrderForm {
 }
 ```
 
-- **Назначение**: Полные данные заказа, включая товары и итоговую сумму
-
-### `FormErrors`
+6. **`FormErrors`**: тип для ошибок валидации формы заказа
 
 ```typescript
 export type FormErrors = Partial<Record<keyof IOrder, string>>;
 ```
 
-- **Назначение**: Тип для ошибок валидации формы заказа
-
 ## Типы представления (View)
 
-### `IPage`
+1. **`IPage`**: описывает состояние страницы
 
 ```typescript
 export interface IPage {
-	products: HTMLElement[];
-	locked: boolean;
-	counter: number;
+	products: HTMLElement[]; // массив HTML-элементов карточек товаров
+	locked: boolean; // флаг блокировки страницы при открытом модальном окне
+	counter: number; // счетчик товаров в корзине
 }
 ```
 
-- **Назначение**: Описывает состояние страницы
-- **Поля**:
-  - `products` - массив HTML-элементов карточек товаров
-  - `locked` - флаг блокировки страницы при открытом модальном окне
-  - `counter` - счетчик товаров в корзине
-
-### `IBasketView`
+2. **`IBasketView`**: состояние представления корзины
 
 ```typescript
 export interface IBasketView {
@@ -278,9 +247,7 @@ export interface IBasketView {
 }
 ```
 
-- **Назначение**: Состояние представления корзины
-
-### `ICard`
+3. **`ICard`**: описывает карточку товара
 
 ```typescript
 export interface ICard {
@@ -291,15 +258,11 @@ export interface ICard {
 	price: number;
 	itemIndex: number;
 	category?: categoryTypes;
-	changeButton(price: number, inBasket: boolean): void;
+	changeButton(price: number, inBasket: boolean): void; // обновляет состояние кнопки покупки
 }
 ```
 
-- **Назначение**: Описывает карточку товара
-- **Метод**:
-  - `changeButton` - обновляет состояние кнопки покупки
-
-### `ICardActions`
+4. **`ICardActions`**: действия для карточки товара
 
 ```typescript
 export interface ICardActions {
@@ -307,9 +270,7 @@ export interface ICardActions {
 }
 ```
 
-- **Назначение**: Действия для карточки товара
-
-### `ISuccess` и `ISuccessActions`
+5. **`ISuccess`** и **`ISuccessActions`**: описывают окно успешного оформления заказа
 
 ```typescript
 export interface ISuccess {
@@ -321,9 +282,7 @@ export interface ISuccessActions {
 }
 ```
 
-- **Назначение**: Описывают окно успешного оформления заказа
-
-### `IModalData`
+6. **`IModalData`**: данные для модального окна
 
 ```typescript
 export interface IModalData {
@@ -331,9 +290,7 @@ export interface IModalData {
 }
 ```
 
-- **Назначение**: Данные для модального окна
-
-### `categoryTypes`
+7. **`categoryTypes`**: возможные категории товаров
 
 ```typescript
 export type categoryTypes =
@@ -344,27 +301,19 @@ export type categoryTypes =
 	| 'хард-скил';
 ```
 
-- **Назначение**: Возможные категории товаров
-
 ## API типы
 
-### `IWebLarekApi`
+1. **`IWebLarekApi`**: интерфейс API приложения
 
 ```typescript
 export interface IWebLarekApi {
-	getProducts: () => Promise<IProduct[]>;
-	getProduct: (id: string) => Promise<IProduct>;
-	sendOrder: (data: Partial<IOrder>) => Promise<IOrderAnswer>;
+	getProducts: () => Promise<IProduct[]>; // получение списка товаров
+	getProduct: (id: string) => Promise<IProduct>; // получение конкретного товара
+	sendOrder: (data: Partial<IOrder>) => Promise<IOrderAnswer>; // отправка заказа
 }
 ```
 
-- **Назначение**: Интерфейс API приложения
-- **Методы**:
-  - `getProducts` - получение списка товаров
-  - `getProduct` - получение конкретного товара
-  - `sendOrder` - отправка заказа
-
-### `IProductsCatalogData`
+2. **`IProductsCatalogData`**: ответ API для каталога товаров с общим количеством
 
 ```typescript
 export interface IProductsCatalogData extends IProductsCatalog {
@@ -372,9 +321,7 @@ export interface IProductsCatalogData extends IProductsCatalog {
 }
 ```
 
-- **Назначение**: Ответ API для каталога товаров с общим количеством
-
-### `IOrderAnswer`
+3. **`IOrderAnswer`**: ответ API после оформления заказа
 
 ```typescript
 export interface IOrderAnswer {
@@ -382,8 +329,6 @@ export interface IOrderAnswer {
 	total: number;
 }
 ```
-
-- **Назначение**: Ответ API после оформления заказа
 
 ## Взаимосвязи типов
 
@@ -398,35 +343,6 @@ graph TD
     IWebLarekApi --> IProduct
     IWebLarekApi --> IOrder
     IWebLarekApi --> IOrderAnswer
-```
-
-## Использование в проекте
-
-1. Импорт типов:
-
-```typescript
-import { IProduct, IWebLarekState, IOrder } from './types';
-```
-
-2. Пример реализации:
-
-```typescript
-// Создание продукта
-const product: IProduct = {
-	id: '1',
-	title: 'Курс TypeScript',
-	category: 'софт-скил',
-	description: 'Подробный курс...',
-	image: '/images/ts-course.png',
-	price: 10000,
-};
-
-// Работа с API
-class Api implements IWebLarekApi {
-	async getProducts(): Promise<IProduct[]> {
-		// реализация
-	}
-}
 ```
 
 ## Базовый код
