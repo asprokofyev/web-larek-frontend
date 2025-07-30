@@ -39,10 +39,6 @@ export class Card extends Component<ICard> {
 		this.container.dataset.id = value;
 	}
 
-	get id(): string {
-		return this.container.dataset.id || '';
-	}
-
 	set title(value: string) {
 		this.setText(this._title, value);
 	}
@@ -62,7 +58,7 @@ export class Card extends Component<ICard> {
 			priceText = settings.messages.card.noprice;
 			this.setDisabled(this._button, true);
 		} else {
-			priceText = formatNumber(value)+' '+settings.currency;
+			priceText = formatNumber(value) + ' ' + settings.currency;
 		}
 		this.setText(this._price, priceText);
 	}
