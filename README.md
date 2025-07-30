@@ -375,7 +375,7 @@ graph TD
 - `post` - выполнение POST, PATCH, DELETE запросов к серверу,
 - `handleResponse` - базовая проверка ответа от сервера и привидение его к требуемому типу.
 
-Для начала работы с сервером при инициалищзации экземпляра класса необходимо передать адрес сервера в обязательном параметре `baseUrl` и при необходимости дополнительные парметры в `options`.
+Для начала работы с сервером при инициализации экземпляра класса необходимо передать адрес сервера в обязательном параметре `baseUrl` и при необходимости дополнительные парметры в `options`.
 
 ### Класс `Component<T>`
 
@@ -595,7 +595,7 @@ export class WebLarek extends Model<IWebLarekState>
 
 ## Компоненты представления
 
-Все методы работы с HTML-элементами веб-страницы реализованы в базовом классе `Component`.
+Все методы работы с HTML-элементами веб-страницы реализованы на базовом классе `Component`.
 
 Поэтому все классы представления описанные ниже по сути реализрована по одной и той же схеме:
 
@@ -660,13 +660,143 @@ set locked(value: boolean): void
 
 **Файл**: `src/components/Modal.ts`.
 
+Класс `Modal` представляет собой компонент для управления основным отображением страницы приложения. Наследуется от базового класса `Component` и реализует интерфейс `IModalData`.
+
+#### Обрабатываемые элементы (свойства класса)
+
+Класс работает со следующими элементами страницы:
+
+- **\_content**: HTMLElement - контейнер для содержания модального окна
+- **\_closeButton**: HTMLButtonElement - кнопка закрытия окна
+
+#### Методы класса
+
+Для изменения данных элемнтов реализованы следующие методы:
+
+1. сеттер **content**: обновляет содержимое окна.
+
+```typescript
+set content(value: HTMLElement)
+```
+
+Параметры:
+
+- `value: HTMLElement` - DOM-элемент для отображения в окне
+
+2. **open**: открывает модальное окно. Генерирует событие `modal:open`, по которому происходит блокировка скроллинга страницы.
+
+```typescript
+open();
+```
+
+3. **close**: очищает от контента и закрывает модальное окно. Генерирует событие `modal:close`, по которому происходит разблокировка скроллинга страницы.
+
+```typescript
+close();
+```
+
+4. **render**: возвращает корневой DOM-элемент. Переопреденный метод базового класса, т.к. кроме возврата корневого элемента надо еще открыть модальное окно методом `open`.
+
+```typescript
+render(data: IModalData): HTMLElement
+```
+
+#### Устанавливаемые слушатели событий
+
+При создании экземпляра на элемент `_closeButton` и `container` добавляется обработчик клика, который закрывет можальное окно.
+
 ### Класс `Form<T>`
 
 **Файл**: `src/components/Form.ts`.
 
+Абстрактный класс `Form<T>` предоставляет базовую функциональность для работы с формами в приложении. Наследуется от класса `Component` и реализует общую логику для:
+
+- Обработки пользовательского ввода
+- Валидации формы
+- Отображения ошибок
+- Отправки данных
+
+Выделение базовой функциональности работы с формами в абстракный класс обусловлено наличием общей для всех форм и их полей функцилнальностью:
+
+- использование джененрик типа позволяет типизировать все поля формы, что обеспечивает безовасность при работе с данными формы,
+- интеграция с брокером событий, что позволяет отделить логику валидации от представления
+- метод `render` принимает как данные формы, так и состояние валидации, что позволяет единообразно обновлять все аспекты формы
+- подписка на события input и submit настраивается автоматически. Не требует дополнительной настройки в наследующих классах
+- интеграция с базовым `Component` наследует базовую функциональность компонента и добавляет специфичное для форм поведение
+
+#### Свойства
+
+- `_submit: HTMLButtonElement` - кнопка отправки формы
+- `_errors: HTMLElement` - контейнер для отображения ошибок
+
+#### Методы
+
+1. **`onFieldChange`**: обрабатывает изменения в полях формы и генерирует соответствующие события.
+
+```typescript
+protected onFieldChange(field: keyof T, value: string): void
+```
+
+Параметры:
+
+- `field: keyof T` - имя измененного поля
+- `value: string` - новое значение поля
+  Генерирует событие:
+  `${formName}.${fieldName}:change` с данными `{ field, value }`
+
+2. сеттер **`valid`**: управляет состоянием кнопки отправки формы.
+
+```typescript
+set valid(value: boolean): void
+```
+
+Параметры:
+
+- `value: boolean` - флаг валидности формы (true - форма валидна)
+
+3. сеттер **`errors`**: устанавливает текст ошибок формы.
+
+```typescript
+set errors(value: string): void
+```
+
+Параметры:
+
+- `value: string` - текст ошибки(ок) для отображения
+
+4. **`render`**: обновляет состояние формы и возвращает DOM-элемент.
+
+```typescript
+render(state: Partial<T> & IFormState): HTMLFormElement
+```
+
+Параметры:
+
+- `state: Partial<T> & IFormState` - объект состояния формы:
+  - `valid: boolean` - флаг валидности
+  - `errors: string` - текст ошибок
+  - остальные поля формы типа T
+
+Возвращает `HTMLFormElement` - DOM-элемент формы
+
+#### Обработчики событий
+
+1. **input**:
+
+   - Отслеживает изменения в полях ввода
+   - Для каждого изменения генерирует событие через `onFieldChange`
+
+2. **submit**:
+   - Перехватывает стандартное поведение формы
+   - Генерирует событие `${formName}:submit`
+
 ### Классы `Order` и `Contacts`
 
 **Файл**: `src/components/Order.ts`.
+
+#### Класс `Order`
+
+#### Класс `Contacts`
 
 ### Класс `Card`
 
@@ -684,11 +814,206 @@ set locked(value: boolean): void
 
 **Файл**: `src/index.ts`.
 
+Данный Presenter реализует паттерн MVP с использованием брокера событий для управления взаимодействием между компонентами приложения. Presenter выступает в роли посредника между Model (данные) и View (отображение), обрабатывая пользовательские действия и обновляя состояние приложения.
+
+### Основные компоненты:
+
+1. **EventEmitter** - брокер событий
+2. **Model (WebLarek)** - хранит состояние приложения (каталог, корзина, заказ)
+3. **View компоненты** (Page, Modal, Basket, Order и др.) - отвечают за отображение
+4. **API (WebLarekApi)** - взаимодействие с сервером
+5. **Presenter** (данный файл) - связующее звено, бизнес-логика
+
+### Инициализация
+
+```typescript
+// Инициализация основных компонентов
+const events = new EventEmitter(); // Брокер событий
+const appData = new WebLarek({}, events); // Модель данных
+const api = new WebLarekApi(CDN_URL, API_URL); // API клиент
+
+// Инициализация UI компонентов
+// главная страница приложения
+const page = new Page(document.body, events);
+// модальное окно
+const modal = new Modal(ensureElement<HTMLElement>('#modal-container'), events);
+// корзина
+const basket = new Basket(cloneTemplate(basketTemplate), events);
+// 1 шаг оформления заказа: форма выбора способа оплаты и ввода адреса доставки
+const order = new Order(cloneTemplate(formStep1Template), events);
+// 2 шаг оформления заказа: форма ввода контактных данных клиента
+const contacts = new Contacts(cloneTemplate(formStep2Template), events);
+```
+
+### Основные потоки событий
+
+#### 1. Загрузка и отображение каталога продуктов
+
+```typescript
+// Загрузка данных
+api.getProducts()
+   .then((data) => appData.setProducts(data));
+
+// Реакция на изменение каталога
+events.on<IProductsCatalog>('products:changed', () => {
+  // Рендер карточек товаров
+  page.catalog = appData.catalog.map(item => {
+    const card = new Card(...);
+    return card.render({...});
+  });
+  // Обновление счетчика корзины
+  page.counter = appData.getProductsInBasketCount();
+});
+```
+
+#### 2. Работа с корзиной
+
+```typescript
+// Добавление/удаление товара
+events.on('basket:changed', (item: IProduct) => {
+	if (appData.inBasket(item.id)) {
+		appData.deleteFromBasket(item.id);
+	} else {
+		appData.addToBasket(item.id);
+	}
+});
+
+// Открытие корзины
+events.on('basket:open', () => {
+	basket.items = appData.order.items.map((id, index) => {
+		// Рендер товаров в корзине
+	});
+	basket.total = appData.getTotal();
+	modal.render({ content: basket.render() });
+});
+```
+
+#### 3. Оформление заказа (2 шага)
+
+```typescript
+// Шаг 1: Способ оплаты и адрес
+events.on('order:open', () => {
+  modal.render({
+    content: order.render({
+      payment: appData.order.payment,
+      address: appData.order.address,
+      valid: !!appData.order.payment && !!appData.order.address
+    })
+  });
+});
+
+// Валидация формы заказа
+events.on('orderFormErrors:change', (errors: Partial<IOrderForm>) => {
+  order.valid = !Object.keys(errors).length;
+  order.errors = Object.values(errors).filter(i => !!i).join('; ');
+});
+
+// Шаг 2: Контактные данные
+events.on('order:submit', () => {
+  modal.render({
+    content: contacts.render({
+      phone: appData.order.phone,
+      email: appData.order.email,
+      valid: !!appData.order.phone && !!appData.order.email
+    })
+  });
+});
+
+// Отправка заказа
+events.on('contacts:submit', () => {
+  api.sendOrder(appData.order)
+     .then((result) => {
+       const success = new Success(...);
+       modal.render({ content: success.render({ total: result.total }) });
+       appData.clearBasket();
+     });
+});
+```
+
+### Вспомогательные функции
+
+#### Управление модальным окном
+
+```typescript
+events.on('modal:open', () => (page.locked = true));
+events.on('modal:close', () => (page.locked = false));
+```
+
+### Шаблоны и компоненты
+
+Используемые шаблоны:
+
+- `#card-catalog` - карточка товара в каталоге
+- `#card-basket` - карточка товара в корзине
+- `#card-preview` - карточка товара в превью
+- `#basket` - корзина
+- `#order` - форма заказа (шаг 1)
+- `#contacts` - форма контактов (шаг 2)
+- `#success` - сообщение об успешном заказе
+
 ## Компоненты работы с API
 
 ### Класс `WebLarekApi`
 
 **Файл**: `src/components/WebLarekApi.ts`.
+
+Класс `WebLarekApi` реализует взаимодействие с серверной частью приложения, предоставляя методы для работы с продуктами и заказами. Наследуется от базового класса `Api` и реализует интерфейс `IWebLarekApi`.
+
+Для начала работы с сервером при инициализации экземпляра класса необходимо передать параметры:
+
+- `cdn: string` - базовый URL CDN для загрузки изображений
+- `baseUrl: string` - базовый URL API сервера
+- `options?: RequestInit` - дополнительные опции для HTTP-запросов (необязательный)
+
+#### Типы данных и интерфейсы
+
+Класс работает со следующими типами:
+
+- `IProduct` - описание продукта
+- `IProductsCatalogData` - структура ответа сервера для каталога
+- `IOrder` - данные заказа
+- `IOrderAnswer` - ответ сервера на создание заказа
+- `IWebLarekApi` - интерфейс API
+
+Строгая типизация всех входных и выходных параметров позволяет выявлять ошибки на этапе компиляции.
+
+#### Методы
+
+1. **`getProducts`**: загружает полный каталог продуктов с сервера.
+
+```typescript
+getProducts(): Promise<IProduct[]>
+```
+
+Возвращает `Promise<IProduct[]>` - промис с массивом продуктов.
+Автоматически добавляет CDN-префикс к URL изображений.
+Преобразует структуру ответа сервера (`IProductsCatalogData`) в массив продуктов.
+
+2. **`getProduct()`**: загружает данные одного продукта по его ID.
+
+```typescript
+getProduct(id: string): Promise<IProduct>
+```
+
+Параметры:
+
+- `id: string` - идентификатор продукта
+
+Возвращает `Promise<IProduct>` - промис с данными продукта.
+Автоматически добавляет CDN-префикс к URL изображения.
+В текущем проекте не используется, но оставлен для будущего расширения.
+
+3. **`sendOrder()`**: отправляет данные заказа на сервер.
+
+```typescript
+sendOrder(data: Partial<IOrder>): Promise<IOrderAnswer>
+```
+
+Параметры:
+
+- `data: Partial<IOrder>` - данные заказа (может содержать не все поля)
+
+Возвращает `Promise<IOrderAnswer>` - промис с ответом сервера о созданном заказе.
 
 ## Размещение в сети
 
