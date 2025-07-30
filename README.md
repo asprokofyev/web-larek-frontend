@@ -1247,4 +1247,4 @@ sendOrder(data: Partial<IOrder>): Promise<IOrderAnswer>
 
 ## Размещение в сети
 
-Рабочая версия проекта доступна по адресу:
+Рабочая версия проекта доступна по адресу: https://asprokofyev.github.io/web-larek-frontend/
