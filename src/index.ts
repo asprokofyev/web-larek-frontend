@@ -187,10 +187,10 @@ events.on('contacts:submit', () => {
 	api
 		.sendOrder(appData.order)
 		.then((result) => {
+			appData.clearBasket();
 			const success = new Success(cloneTemplate(orderSuccessTemplate), {
 				onClick: () => {
 					modal.close();
-					appData.clearBasket();
 				},
 			});
 

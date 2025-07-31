@@ -37,8 +37,12 @@ export class Order extends Form<Partial<IOrderForm>> {
 		if (value) {
 			this.toggleClass(
 				this.container.elements.namedItem(value) as HTMLButtonElement,
-				'button_alt-active', true
+				'button_alt-active',
+				true
 			);
+		} else {
+			this._buttonOnline.classList.remove('button_alt-active');
+			this._buttonCash.classList.remove('button_alt-active');
 		}
 	}
 

@@ -100,7 +100,7 @@ export class WebLarek extends Model<IWebLarekState> {
 			errors.payment = settings.messages.formErrors.payment;
 		}
 		if (!this.order.address) {
-			errors.phone = settings.messages.formErrors.phone;
+			errors.phone = settings.messages.formErrors.address;
 		}
 		this.formErrors = errors;
 		this.events.emit('orderFormErrors:change', this.formErrors);
