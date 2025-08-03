@@ -1,4 +1,4 @@
-import { IPage } from '../types';
+import { IPage, ProductsCount } from '../types';
 import { ensureElement } from '../utils/utils';
 import { Component } from './base/Component';
 import { IEvents } from './base/events';
@@ -22,7 +22,7 @@ export class Page extends Component<IPage> {
 		});
 	}
 
-	set counter(value: number) {
+	set counter(value: ProductsCount) {
 		this.setText(this._counter, String(value));
 	}
 

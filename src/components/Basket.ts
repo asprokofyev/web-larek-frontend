@@ -1,5 +1,5 @@
 import { settings } from './../utils/constants';
-import { IBasketView } from '../types';
+import { IBasketView, Price } from '../types';
 import { createElement, ensureElement, formatNumber } from '../utils/utils';
 import { Component } from './base/Component';
 import { EventEmitter } from './base/events';
@@ -39,7 +39,7 @@ export class Basket extends Component<IBasketView> {
 		}
 	}
 
-	set total(total: number) {
+	set total(total: Price) {
 		this.setText(this._total, formatNumber(total) + ' ' + settings.currency);
 	}
 }

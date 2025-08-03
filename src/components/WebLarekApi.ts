@@ -1,6 +1,13 @@
 // api для обмена данными с сервером
 
-import { IOrder, IOrderAnswer, IProduct, IProductsCatalogData, IWebLarekApi } from '../types';
+import {
+	IOrder,
+	IOrderAnswer,
+	IProduct,
+	IProductsCatalogData,
+	IWebLarekApi,
+	UniqId,
+} from '../types';
 import { Api } from './base/api';
 
 export class WebLarekApi extends Api implements IWebLarekApi {
@@ -22,7 +29,7 @@ export class WebLarekApi extends Api implements IWebLarekApi {
 	}
 
 	// загрузка данных одного продукта. в есть, но в проекте не используется...
-	getProduct(id: string): Promise<IProduct> {
+	getProduct(id: UniqId): Promise<IProduct> {
 		return this.get(`/product/${id}`).then((item: IProduct) => ({
 			...item,
 			image: this.cdn + item.image,

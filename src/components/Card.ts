@@ -1,7 +1,7 @@
 // вывод карточки прожукта
 // три вида карточки - три класса: карточка на странице, карточка в модальном окне, карточка в корзине
 
-import { categoryTypes, ICard, ICardActions } from '../types';
+import { categoryTypes, ICard, ICardActions, Price, ProductDescription, ProductImageUrl, ProductTitle, UniqId } from '../types';
 import { settings } from '../utils/constants';
 import { formatNumber } from '../utils/utils';
 import { Component } from './base/Component';
@@ -35,15 +35,15 @@ export class Card extends Component<ICard> {
 		}
 	}
 
-	set id(value: string) {
+	set id(value: UniqId) {
 		this.container.dataset.id = value;
 	}
 
-	set title(value: string) {
+	set title(value: ProductTitle) {
 		this.setText(this._title, value);
 	}
 
-	set description(value: string) {
+	set description(value: ProductDescription) {
 		this.setText(this._description, value);
 	}
 
@@ -52,7 +52,7 @@ export class Card extends Component<ICard> {
 		this.toggleClass(this._category, settings.categoryClasses[value]);
 	}
 
-	set price(value: number) {
+	set price(value: Price) {
 		let priceText = '';
 		if (!value) {
 			priceText = settings.messages.card.noprice;
@@ -63,7 +63,7 @@ export class Card extends Component<ICard> {
 		this.setText(this._price, priceText);
 	}
 
-	set image(value: string) {
+	set image(value: ProductImageUrl) {
 		this.setImage(this._image, value, this.title);
 	}
 
@@ -71,7 +71,7 @@ export class Card extends Component<ICard> {
 		this.setText(this._itemIndex, String(value));
 	}
 
-	changeButton(price: number, inBasket: boolean): void {
+	changeButton(price: Price, inBasket: boolean): void {
 		if (!price) {
 			this.setText(this._button, settings.messages.buyButtonValues.disabled);
 			this.setDisabled(this._button, true);

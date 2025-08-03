@@ -1,7 +1,7 @@
 import { settings } from '../utils/constants';
 import { ensureElement, formatNumber } from '../utils/utils';
 import { Component } from './base/Component';
-import { ISuccess, ISuccessActions } from '../types/index';
+import { ISuccess, ISuccessActions, Price } from '../types/index';
 
 export class Success extends Component<ISuccess> {
 	protected _close: HTMLElement;
@@ -25,7 +25,7 @@ export class Success extends Component<ISuccess> {
 		}
 	}
 
-	set total(value: number) {
+	set total(value: Price) {
 		this.setText(
 			this._total,
 			settings.messages.success.replace('summa', formatNumber(value))

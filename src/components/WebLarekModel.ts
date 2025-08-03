@@ -4,6 +4,9 @@ import {
 	IOrderForm,
 	IProduct,
 	IWebLarekState,
+	Price,
+	ProductsCount,
+	UniqId,
 } from '../types';
 import { settings } from '../utils/constants';
 import { Model } from './base/Model';
@@ -20,7 +23,7 @@ export class WebLarek extends Model<IWebLarekState> {
 		items: [],
 		total: 0,
 	};
-	preview: string | null; // id просмотриваемого продукта в модальном окне
+	preview: UniqId | null; // id просмотриваемого продукта в модальном окне
 	formErrors: FormErrors = {}; // массив ошибок формы
 
 	// сохранить данные каталога полученные из api
@@ -30,36 +33,36 @@ export class WebLarek extends Model<IWebLarekState> {
 	}
 
 	// возвращает данные конкретного продукта
-	getProduct(id: string): IProduct {
+	getProduct(id: UniqId): IProduct {
 		return this.catalog.find((item) => item.id === id);
 	}
 
 	// добавить продукт в корзину
-	addToBasket(id: string): void {
+	addToBasket(id: UniqId): void {
 		this.order.items.push(id);
 		this.order.total = this.getTotal();
 		this.events.emit('products:changed');
 	}
 
 	// удалить продукт из корзины
-	deleteFromBasket(id: string): void {
+	deleteFromBasket(id: UniqId): void {
 		this.order.items = this.order.items.filter((item) => item !== id);
 		this.order.total = this.getTotal();
 		this.events.emit('products:changed');
 	}
 
 	// проверить наличие продукта в корзине
-	inBasket(id: string): boolean {
+	inBasket(id: UniqId): boolean {
 		return this.order.items.find((item) => item === id) ? true : false;
 	}
 
 	// посчитать количество продуктов в корзине
-	getProductsInBasketCount(): number {
+	getProductsInBasketCount(): ProductsCount {
 		return this.order.items.length;
 	}
 
 	// посчитать общую стоимость продуктов корзины/заказа
-	getTotal(): number {
+	getTotal(): Price {
 		return this.order.items.reduce(
 			(a, c) => a + this.catalog.find((it) => it.id === c).price,
 			0

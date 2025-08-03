@@ -1,6 +1,6 @@
 // классы отображения форм оформления заказа
 
-import { IOrderForm } from '../types';
+import { ClientAddress, ClientEmail, ClientPhone, IOrderForm, PaymentMethod } from '../types';
 import { IEvents } from './base/events';
 import { Form } from './Form';
 
@@ -33,7 +33,7 @@ export class Order extends Form<Partial<IOrderForm>> {
 		});
 	}
 
-	set payment(value: string) {
+	set payment(value: PaymentMethod) {
 		if (value) {
 			this.toggleClass(
 				this.container.elements.namedItem(value) as HTMLButtonElement,
@@ -46,7 +46,7 @@ export class Order extends Form<Partial<IOrderForm>> {
 		}
 	}
 
-	set address(value: string) {
+	set address(value: ClientAddress) {
 		(this.container.elements.namedItem('address') as HTMLInputElement).value =
 			value;
 	}
@@ -58,12 +58,12 @@ export class Contacts extends Form<Partial<IOrderForm>> {
 		super(container, events);
 	}
 
-	set phone(value: string) {
+	set phone(value: ClientPhone) {
 		(this.container.elements.namedItem('phone') as HTMLInputElement).value =
 			value;
 	}
 
-	set email(value: string) {
+	set email(value: ClientEmail) {
 		(this.container.elements.namedItem('email') as HTMLInputElement).value =
 			value;
 	}
