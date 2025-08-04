@@ -7,8 +7,8 @@ import {
 	Price,
 	ProductsCount,
 	UniqId,
-} from '../types';
-import { settings } from '../utils/constants';
+} from '../../types';
+import { settings } from '../../utils/constants';
 import { Model } from './base/Model';
 
 // основной каласс работы с данными приложения

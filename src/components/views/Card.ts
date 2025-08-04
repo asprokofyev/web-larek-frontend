@@ -1,9 +1,18 @@
 // вывод карточки прожукта
 // три вида карточки - три класса: карточка на странице, карточка в модальном окне, карточка в корзине
 
-import { categoryTypes, ICard, ICardActions, Price, ProductDescription, ProductImageUrl, ProductTitle, UniqId } from '../types';
-import { settings } from '../utils/constants';
-import { formatNumber } from '../utils/utils';
+import {
+	categoryTypes,
+	ICard,
+	ICardActions,
+	Price,
+	ProductDescription,
+	ProductImageUrl,
+	ProductTitle,
+	UniqId,
+} from '../../types';
+import { settings } from '../../utils/constants';
+import { formatNumber } from '../../utils/utils';
 import { Component } from './base/Component';
 
 export class Card extends Component<ICard> {

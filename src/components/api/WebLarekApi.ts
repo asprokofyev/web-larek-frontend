@@ -7,7 +7,7 @@ import {
 	IProductsCatalogData,
 	IWebLarekApi,
 	UniqId,
-} from '../types';
+} from '../../types';
 import { Api } from './base/api';
 
 export class WebLarekApi extends Api implements IWebLarekApi {

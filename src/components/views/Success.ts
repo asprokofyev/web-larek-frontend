@@ -1,7 +1,7 @@
-import { settings } from '../utils/constants';
-import { ensureElement, formatNumber } from '../utils/utils';
+import { settings } from '../../utils/constants';
+import { ensureElement, formatNumber } from '../../utils/utils';
 import { Component } from './base/Component';
-import { ISuccess, ISuccessActions, Price } from '../types/index';
+import { ISuccess, ISuccessActions, Price } from '../../types/index';
 
 export class Success extends Component<ISuccess> {
 	protected _close: HTMLElement;

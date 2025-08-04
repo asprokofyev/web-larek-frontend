@@ -1,8 +1,8 @@
 // классы отображения форм оформления заказа
 
-import { ClientAddress, ClientEmail, ClientPhone, IOrderForm, PaymentMethod } from '../types';
-import { IEvents } from './base/events';
-import { Form } from './Form';
+import { ClientAddress, IOrderForm, PaymentMethod } from '../../types';
+import { IEvents } from '../events_broker/events';
+import { Form } from './base/Form';
 
 // шаг 1. форма выбора способа оплаты и адреса доставки
 export class Order extends Form<Partial<IOrderForm>> {
@@ -48,23 +48,6 @@ export class Order extends Form<Partial<IOrderForm>> {
 
 	set address(value: ClientAddress) {
 		(this.container.elements.namedItem('address') as HTMLInputElement).value =
-			value;
-	}
-}
-
-// шаг2. форма ввода email и номера телефона
-export class Contacts extends Form<Partial<IOrderForm>> {
-	constructor(container: HTMLFormElement, events: IEvents) {
-		super(container, events);
-	}
-
-	set phone(value: ClientPhone) {
-		(this.container.elements.namedItem('phone') as HTMLInputElement).value =
-			value;
-	}
-
-	set email(value: ClientEmail) {
-		(this.container.elements.namedItem('email') as HTMLInputElement).value =
 			value;
 	}
 }
